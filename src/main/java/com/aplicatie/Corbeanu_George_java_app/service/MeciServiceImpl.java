@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.MeciDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Meci;
 import com.aplicatie.Corbeanu_George_java_app.repository.MeciRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class MeciServiceImpl implements MeciService {
 
     @Transactional
     @Override
-    public List<Meci> get() {
-        return meciRepository.get();
+    public List<MeciDTO> getMeciuri() {
+        return meciRepository.getMeciuri();
     }
 
     @Transactional

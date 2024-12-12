@@ -2,6 +2,7 @@ package com.aplicatie.Corbeanu_George_java_app.service;
 
 import java.util.List;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.EchipaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +18,8 @@ public class EchipaServiceImpl implements EchipaService {
 
     @Transactional
     @Override
-    public List<Echipa> get() {
-        return echipaRepository.get();
+    public List<EchipaDTO> getEchipe() {
+        return echipaRepository.getEchipe();
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.StadionDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Stadion;
 import com.aplicatie.Corbeanu_George_java_app.repository.StadionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class StadionServiceImpl implements StadionService {
 
     @Transactional
     @Override
-    public List<Stadion> get() {
-        return stadionRepository.get();
+    public List<StadionDTO> getStadioane() {
+        return stadionRepository.getStadioane();
     }
 
     @Transactional

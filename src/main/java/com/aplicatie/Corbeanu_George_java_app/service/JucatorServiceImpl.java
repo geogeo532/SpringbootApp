@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.JucatorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Jucator;
 import com.aplicatie.Corbeanu_George_java_app.repository.JucatorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,15 @@ public class JucatorServiceImpl implements JucatorService {
 
     @Transactional
     @Override
-    public List<Jucator> get() {
-        return jucatorRepository.get();
+    public List<JucatorDTO> getJucatori() {
+        return jucatorRepository.getJucatori();
+    }
+
+    @Transactional
+    @Override
+    public List<JucatorDTO> getJucatoriByMinGoals(int minGoals)
+    {
+        return jucatorRepository.getJucatoriByMinGoals(minGoals);
     }
 
     @Transactional
@@ -25,6 +33,7 @@ public class JucatorServiceImpl implements JucatorService {
     public Jucator get(int id) {
         return jucatorRepository.get(id);
     }
+
 
     @Transactional
     @Override

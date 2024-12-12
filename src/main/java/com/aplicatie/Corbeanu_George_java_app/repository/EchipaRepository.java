@@ -2,11 +2,12 @@ package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import java.util.List;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.EchipaDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Echipa;
 
 public interface EchipaRepository {
 
-    List<Echipa> get();
+    public List<EchipaDTO> getEchipe();
 
     Echipa get(int id);
 

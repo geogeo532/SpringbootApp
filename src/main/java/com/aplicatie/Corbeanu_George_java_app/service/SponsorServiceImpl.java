@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.SponsorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Sponsor;
 import com.aplicatie.Corbeanu_George_java_app.repository.SponsorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Transactional
     @Override
-    public List<Sponsor> get() {
-        return sponsorRepository.get();
+    public List<SponsorDTO> getSponsori() {
+        return sponsorRepository.getSponsori();
     }
 
     @Transactional

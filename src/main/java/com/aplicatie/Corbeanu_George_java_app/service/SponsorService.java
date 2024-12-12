@@ -1,11 +1,12 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.SponsorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Sponsor;
 import java.util.List;
 
 public interface SponsorService {
 
-    List<Sponsor> get();
+    public List<SponsorDTO> getSponsori();
 
     Sponsor get(int id);
 

@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.SponsorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Sponsor;
 import com.aplicatie.Corbeanu_George_java_app.service.SponsorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class SponsorController {
 
     // Get all sponsors
     @GetMapping("/sponsor")
-    public List<Sponsor> get() {
-        return sponsorService.get();
+    public List<SponsorDTO> getSponsori() {
+        return sponsorService.getSponsori();
     }
 
     // Get a sponsor by ID

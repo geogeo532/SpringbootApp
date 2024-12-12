@@ -48,17 +48,17 @@ public class FootballWorldCupController {
                 case "clasamente":
                     return ResponseEntity.ok(clasamentService.getClasaments());
                 case "echipe":
-                    return ResponseEntity.ok(echipaService.get());
+                    return ResponseEntity.ok(echipaService.getEchipe());
                 case "jucatori":
-                    return ResponseEntity.ok(jucatorService.get());
+                    return ResponseEntity.ok(jucatorService.getJucatori());
                 case "meciuri":
-                    return ResponseEntity.ok(meciService.get());
+                    return ResponseEntity.ok(meciService.getMeciuri());
                 case "sponsori":
-                    return ResponseEntity.ok(sponsorService.get());
+                    return ResponseEntity.ok(sponsorService.getSponsori());
                 case "sponsori_echipe":
                     return ResponseEntity.ok(sponsorEchipeService.get());
                 case "stadioane":
-                    return ResponseEntity.ok(stadionService.get());
+                    return ResponseEntity.ok(stadionService.getStadioane());
                 case "statistici_echipe":
                     return ResponseEntity.ok(statisticaEchipeService.get());
                 case "statistici_jucatori":

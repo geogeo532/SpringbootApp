@@ -1,7 +1,9 @@
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.ClasamentDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Clasament;
 import com.aplicatie.Corbeanu_George_java_app.model.ClasamentId;
+import com.aplicatie.Corbeanu_George_java_app.repository.ClasamentRepository;
 import com.aplicatie.Corbeanu_George_java_app.service.ClasamentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,13 @@ public class ClasamentController {
     private ClasamentService clasamentService;
 
     @GetMapping("/clasament")
-    public List<Clasament> get(){
+    public List<ClasamentDTO> get(){
         return clasamentService.getClasaments();
+    }
+
+    @GetMapping("/clasamente/minim")
+    public List<ClasamentDTO> getClasamente(@RequestParam int minPoints) {
+        return clasamentService.getClasamenteByMinPoints(minPoints);
     }
 
     @PostMapping("/clasament")

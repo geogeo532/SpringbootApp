@@ -1,8 +1,10 @@
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.EchipaDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
@@ -18,12 +20,25 @@ public class EchipaRepositoryImpl implements EchipaRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Echipa> get() {
-        String sql = "SELECT * FROM echipe";
-        Query query = entityManager.createNativeQuery(sql, Echipa.class);
-        List<Echipa> list = query.getResultList();
-        return list;
+    public List<EchipaDTO> getEchipe() {
+        String query = "SELECT e.tara, e.antrenor, e.palmares FROM echipe e";
+
+        // Executăm interogarea și obținem rezultatele
+        List<Object[]> result = entityManager.createNativeQuery(query).getResultList();
+
+        List<EchipaDTO> echipe = new ArrayList<>();
+        for (Object[] row : result) {
+            String tara = (String) row[0];
+            String antrenor = (String) row[1];
+            String palmares = (String) row[2];
+
+            EchipaDTO echipaDTO = new EchipaDTO(tara, antrenor, palmares);
+            echipe.add(echipaDTO);
+        }
+
+        return echipe;
     }
+
 
     @Override
     public Echipa get(int id) {

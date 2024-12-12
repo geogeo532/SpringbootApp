@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.JucatorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Jucator;
 import com.aplicatie.Corbeanu_George_java_app.service.JucatorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,13 @@ public class JucatorController {
 
     // Get all players
     @GetMapping("/jucator")
-    public List<Jucator> get() {
-        return jucatorService.get();
+    public List<JucatorDTO> get() {
+        return jucatorService.getJucatori();
+    }
+
+    @GetMapping("/jucatori/minim")
+    public List<JucatorDTO> getJucatori(@RequestParam int minGoals) {
+        return jucatorService.getJucatoriByMinGoals(minGoals);
     }
 
     // Get a player by ID

@@ -13,7 +13,7 @@ public class Stadion {
     @Column
     private String nume_stadion;
     @Column
-    private String nume_oras;
+    private String oras;
     @Column
     private int capacitate;
 
@@ -25,8 +25,8 @@ public class Stadion {
         return nume_stadion;
     }
 
-    public String getNume_oras() {
-        return nume_oras;
+    public String getOras() {
+        return oras;
     }
 
     public int getCapacitate() {
@@ -37,8 +37,8 @@ public class Stadion {
         this.capacitate = capacitate;
     }
 
-    public void setNume_oras(String nume_oras) {
-        this.nume_oras = nume_oras;
+    public void setOras(String oras) {
+        this.oras = oras;
     }
 
     public void setId_stadion(int id_stadion) {

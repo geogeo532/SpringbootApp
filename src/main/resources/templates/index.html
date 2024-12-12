@@ -69,12 +69,59 @@
             text-align: center;
             padding: 20px;
         }
+
+        #customInput, #playerInput {
+            margin-top: 20px;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+
+        #customInput input, #playerInput input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+
+        #customInput button, #playerInput button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #customInput button:hover, #playerInput button:hover {
+            background-color: #45a049;
+        }
     </style>
 
     <script>
         // Function to fetch data from the server
         function fetchData() {
             const selectedTable = document.getElementById("tableDropdown").value; // Selected table
+            const table = document.getElementById("dataTable");
+
+            // Show or hide the custom input divs based on selection
+            const customInputDiv = document.getElementById("customInput");
+            const playerInputDiv = document.getElementById("playerInput");
+
+            if (selectedTable === "clasamente") {
+                customInputDiv.style.display = "block";
+                playerInputDiv.style.display = "none";
+            } else if (selectedTable === "jucatori") {
+                playerInputDiv.style.display = "block";
+                customInputDiv.style.display = "none";
+            } else {
+                customInputDiv.style.display = "none";
+                playerInputDiv.style.display = "none";
+            }
+
+            if (selectedTable === "") {
+                table.innerHTML = ""; // Clear the table content if no table is selected
+                return;
+            }
+
             const endpoint = `/admin/api/${selectedTable}`; // Corresponding endpoint
 
             // Fetch request to the endpoint
@@ -86,16 +133,79 @@
                     return response.json();
                 })
                 .then(data => {
-                    displayTable(data); // Display the fetched data in the table
+                    displayTable(data, selectedTable); // Display the fetched data in the table
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
-                    alert("A apărut o eroare la preluarea datelor! Verificați conexiunea sau serverul.");
+                    alert("A apărut o eroare la preluarea datelor! Verificați conexiunea cu baza de date sau serverul.");
+                });
+        }
+
+        // Function to fetch minimum rankings data
+        function fetchMinData() {
+            const table = document.getElementById("dataTable");
+            const minPoints = document.getElementById("minInput").value;
+
+            if (!minPoints) {
+                alert("Introduceți un punctaj minim valid!");
+                return;
+            }
+
+            const endpoint = `/admin/api/clasamente/minim?minPoints=${minPoints}`;
+
+            // Fetch request to the endpoint
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayFilteredTable(data, ["tara", "meciuri_jucate", "puncte", "golaveraj"]); // Display filtered data in the table
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    alert("A apărut o eroare la preluarea datelor! Verificați conexiunea cu baza de date sau serverul.");
+                });
+        }
+
+        // Function to fetch minimum goals data for players
+        function fetchMinGoals() {
+            const table = document.getElementById("dataTable");
+            const minGoals = document.getElementById("goalInput").value;
+
+            if (!minGoals) {
+                alert("Introduceți un număr minim de goluri valid!");
+                return;
+            }
+
+            const endpoint = `/admin/api/jucatori/minim?minGoals=${minGoals}`;
+
+            // Encode user and password for Basic Authentication
+            const username = "admin";
+            const password = "parola";
+            const basicAuth = 'Basic ' + btoa(`${username}:${password}`);
+
+            // Fetch request to the endpoint
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayFilteredTable(data, ["nume_jucator", "tara", "pozitie_jucata", "goluri"]); // Display filtered data in the table
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    alert("A apărut o eroare la preluarea datelor! Verificați conexiunea cu baza de date sau serverul.");
                 });
         }
 
         // Function to populate the table with data
-        function displayTable(data) {
+        function displayTable(data, selectedTable) {
             const table = document.getElementById("dataTable");
             table.innerHTML = ''; // Clear previous table data
 
@@ -104,20 +214,14 @@
                 return;
             }
 
-            // Create table header dynamically based on the keys of the first data object
-            const headers = Object.keys(data[0]);
+            const columnsToDisplay = Object.keys(data[0]);
+
+            // Create table header dynamically based on the selected columns
             const headerRow = document.createElement("tr");
 
-            headers.forEach(header => {
+            columnsToDisplay.forEach(header => {
                 const th = document.createElement("th");
-
-                // Check if the column is "pozitie_finala" and the table is "clasamente"
-                if (header === "pozitie_finala" && document.getElementById("tableDropdown").value === "clasamente") {
-                    th.innerText = "pozitie finala in clasament";
-                } else {
-                    th.innerText = header.replace('_', ' '); // Improve readability by replacing underscores with spaces
-                }
-
+                th.innerText = header.replace('_', ' '); // Replace underscores for readability
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
@@ -125,7 +229,39 @@
             // Add table rows
             data.forEach(item => {
                 const row = document.createElement("tr");
-                headers.forEach(header => {
+                columnsToDisplay.forEach(header => {
+                    const td = document.createElement("td");
+                    td.innerText = item[header] !== null ? item[header] : 'N/A'; // Handle null values
+                    row.appendChild(td);
+                });
+                table.appendChild(row);
+            });
+        }
+
+        // Function to display filtered table
+        function displayFilteredTable(data, columnsToDisplay) {
+            const table = document.getElementById("dataTable");
+            table.innerHTML = ''; // Clear previous table data
+
+            if (!data || data.length === 0) {
+                table.innerHTML = '<tr><td colspan="5" class="empty-message">No data available</td></tr>';
+                return;
+            }
+
+            // Create table header dynamically based on the selected columns
+            const headerRow = document.createElement("tr");
+
+            columnsToDisplay.forEach(header => {
+                const th = document.createElement("th");
+                th.innerText = header.replace('_', ' '); // Replace underscores for readability
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            // Add table rows
+            data.forEach(item => {
+                const row = document.createElement("tr");
+                columnsToDisplay.forEach(header => {
                     const td = document.createElement("td");
                     td.innerText = item[header] !== null ? item[header] : 'N/A'; // Handle null values
                     row.appendChild(td);
@@ -142,20 +278,31 @@
 <div style="text-align: center;">
     <label for="tableDropdown">Selectati ce doriti sa vizualizati azi:</label>
     <select id="tableDropdown" onchange="fetchData()"> <!-- Dropdown for table selection -->
+        <option value="" selected>Nicio tabela selectata</option>
         <option value="clasamente">Clasamente</option>
         <option value="echipe">Echipe</option>
         <option value="jucatori">Jucători</option>
         <option value="meciuri">Meciuri</option>
         <option value="sponsori">Sponsori</option>
-        <option value="sponsori_echipe">Sponsori Echipe</option>
         <option value="stadioane">Stadioane</option>
-        <option value="statistici_echipe">Statistici Echipe</option>
-        <option value="statistici_jucatori">Statistici Jucători</option>
     </select>
 </div>
 
 <table id="dataTable">
     <!-- The table will be dynamically populated with data -->
 </table>
+
+<div id="customInput">
+    <label for="minInput">Introduceți punctajul minim:</label>
+    <input type="number" id="minInput" placeholder="0">
+    <button onclick="fetchMinData()">Executa</button>
+</div>
+
+<div id="playerInput">
+    <label for="goalInput">Introduceți numărul minim de goluri:</label>
+    <input type="number" id="goalInput" placeholder="0">
+    <button onclick="fetchMinGoals()">Executa</button>
+</div>
+
 </body>
 </html>

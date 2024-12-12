@@ -2,6 +2,7 @@ package com.aplicatie.Corbeanu_George_java_app.controller;
 
 import java.util.List;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.EchipaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class EchipaController {
 
     // Get all teams
     @GetMapping("/echipa")
-    public List<Echipa> get() {
-        return echipaService.get();
+    public List<EchipaDTO> get() {
+        return echipaService.getEchipe();
     }
 
     // Get a team by ID

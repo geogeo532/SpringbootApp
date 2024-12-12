@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.MeciDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Meci;
 import com.aplicatie.Corbeanu_George_java_app.service.MeciService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class MeciController {
 
     // Get all matches
     @GetMapping("/meci")
-    public List<Meci> get() {
-        return meciService.get();
+    public List<MeciDTO> getMeciuri() {
+        return meciService.getMeciuri();
     }
 
     // Get a match by ID

@@ -1,6 +1,7 @@
 package com.aplicatie.Corbeanu_George_java_app.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "clasamente", schema = "dbo")
@@ -13,6 +14,8 @@ public class Clasament {
     @Id
     @Column(name = "id_echipa")
     private int id_echipa;
+    @Transient
+    private String tara;
     @Column
     private int pozitie_finala;
     @Column
@@ -26,7 +29,35 @@ public class Clasament {
     @Column
     private int golaveraj;
 
+    public Clasament(int id_clasament,int id_echipa,int pozitieFinala, int meciuriJucate, int victorii, int infrangeri, int puncte, int golaveraj) {
+        this.id_clasament = id_clasament;
+        this.id_echipa = id_echipa;
+        this.pozitie_finala = pozitieFinala;
+        this.meciuri_jucate = meciuriJucate;
+        this.victorii = victorii;
+        this.infrangeri = infrangeri;
+        this.puncte = puncte;
+        this.golaveraj = golaveraj;
+    }
 
+    public Clasament(int pozitieFinala, int meciuriJucate, int victorii, int infrangeri, int puncte, int golaveraj) {
+        this.pozitie_finala = pozitieFinala;
+        this.meciuri_jucate = meciuriJucate;
+        this.victorii = victorii;
+        this.infrangeri = infrangeri;
+        this.puncte = puncte;
+        this.golaveraj = golaveraj;
+    }
+
+    public Clasament() {}
+
+    public String getTara() {
+        return tara;
+    }
+
+    public void setTara(String tara) {
+        this.tara = tara;
+    }
 
     public int getId_clasament() {
         return id_clasament;

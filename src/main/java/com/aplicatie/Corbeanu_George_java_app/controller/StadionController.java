@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.StadionDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Stadion;
 import com.aplicatie.Corbeanu_George_java_app.service.StadionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class StadionController {
 
     // Get all stadioane
     @GetMapping("/stadion")
-    public List<Stadion> get() {
-        return stadionService.get();
+    public List<StadionDTO> getStadioane() {
+        return stadionService.getStadioane();
     }
 
     // Get a stadion by ID

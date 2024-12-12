@@ -1,11 +1,12 @@
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.MeciDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Meci;
 import java.util.List;
 
 public interface MeciRepository {
 
-    List<Meci> get();
+    public List<MeciDTO> getMeciuri();
 
     Meci get(int id);
 

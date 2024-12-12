@@ -1,5 +1,6 @@
 package com.aplicatie.Corbeanu_George_java_app.service;
 
+import com.aplicatie.Corbeanu_George_java_app.DTO.ClasamentDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Clasament;
 import com.aplicatie.Corbeanu_George_java_app.model.ClasamentId;
 import com.aplicatie.Corbeanu_George_java_app.repository.ClasamentRepository;
@@ -20,8 +21,15 @@ public class ClasamentServiceImpl implements ClasamentService {
 
     @Transactional
     @Override
-    public List<Clasament> getClasaments() {
+    public List<ClasamentDTO> getClasaments() {
         return clasamentRepository.getClasaments();
+    }
+
+    @Transactional
+    @Override
+    public List<ClasamentDTO> getClasamenteByMinPoints(int minPoints)
+    {
+        return clasamentRepository.getClasamenteByMinPoints(minPoints);
     }
 
     @Transactional
@@ -30,6 +38,7 @@ public class ClasamentServiceImpl implements ClasamentService {
         return clasamentRepository.findById(clasamentId)
                 .orElseThrow(() -> new EntityNotFoundException("Clasament not found!"));
     }
+
 
     @Transactional
     @Override
