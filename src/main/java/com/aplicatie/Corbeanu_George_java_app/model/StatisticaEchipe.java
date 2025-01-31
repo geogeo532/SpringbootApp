@@ -1,8 +1,16 @@
+/** Clasa pentru crearea modelului pentru cheia primara compusa a tabelului statistica_echipe
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "statistici_echipe", schema = "dbo")
 public class StatisticaEchipe {
 
     @Id
@@ -30,6 +38,9 @@ public class StatisticaEchipe {
         this.infrangeri = infrangeri;
         this.goluri_marcate = goluri_marcate;
         this.goluri_primite = goluri_primite;
+    }
+
+    public StatisticaEchipe() {
     }
 
     public void setId_statistica_echipa(int id_statistica_echipa) {

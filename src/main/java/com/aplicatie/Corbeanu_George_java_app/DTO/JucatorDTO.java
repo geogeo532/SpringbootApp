@@ -1,14 +1,21 @@
+/** Clasa pentru modelul jucator, modificat special pentru afisarea pe pagina de frontend
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.DTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 public class JucatorDTO {
-
+    @NotBlank(message = "Numele jucătorului este obligatoriu.")
     private String nume_jucator;
+    @NotBlank(message = "Țara este obligatorie.")
     private String tara;
+    @NotBlank(message = "Poziția jucată este obligatorie.")
     private String  pozitie_jucata;
     private int goluri;
     private int pase_decisive;
@@ -30,6 +37,10 @@ public class JucatorDTO {
         this.tara = tara;
         this.pozitie_jucata = pozitie_jucata;
         this.goluri = goluri;
+
+    }
+
+    public JucatorDTO() {
 
     }
 
@@ -89,4 +100,5 @@ public class JucatorDTO {
     public void setCartonase_galbene(int cartonase_galbene) {
         this.cartonase_galbene = cartonase_galbene;
     }
+
 }

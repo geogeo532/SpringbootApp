@@ -1,3 +1,7 @@
+/** Clasa pentru crearea repository-ului pentru tabela statistici_jucători
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import com.aplicatie.Corbeanu_George_java_app.model.StatisticaJucatori;

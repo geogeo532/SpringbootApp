@@ -1,3 +1,7 @@
+/** Clasa pentru crearea modelului sponsori_echipe
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.model;
 
 import jakarta.persistence.Column;

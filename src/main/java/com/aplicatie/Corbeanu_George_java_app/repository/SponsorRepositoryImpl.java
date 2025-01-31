@@ -1,3 +1,7 @@
+/** Clasa pentru crearea implementării repository-ului pentru tabela sponsori
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import com.aplicatie.Corbeanu_George_java_app.DTO.SponsorDTO;
@@ -18,7 +22,8 @@ public class SponsorRepositoryImpl implements SponsorRepository {
 
     @Override
     public List<SponsorDTO> getSponsori() {
-        String query = "SELECT s.nume_sponsor, e.tara AS echipa_tara, s.industria, s.tara AS sponsor_tara, se.durata_sponsorizare, se.valoare_sponsorizare " +
+        String query = "SELECT s.nume_sponsor, e.tara AS echipa_tara, " +
+                "s.industria, s.tara AS sponsor_tara, se.durata_sponsorizare, se.valoare_sponsorizare " +
                 "FROM sponsori s " +
                 "JOIN sponsori_echipe se ON s.id_sponsor = se.id_sponsor " +
                 "JOIN echipe e ON se.id_echipa = e.id_echipa";

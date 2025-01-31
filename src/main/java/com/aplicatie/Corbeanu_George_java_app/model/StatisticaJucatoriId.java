@@ -1,3 +1,9 @@
+/** Clasa pentru crearea modelului pentru cheia primara compusa a tabelului statistica_jucatori
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
+
+
 package com.aplicatie.Corbeanu_George_java_app.model;
 
 import jakarta.persistence.Column;

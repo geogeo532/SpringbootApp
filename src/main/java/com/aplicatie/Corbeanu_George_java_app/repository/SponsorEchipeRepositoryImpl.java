@@ -1,3 +1,7 @@
+/** Clasa pentru crearea implementării repository-ului pentru tabela sponsori_echipe
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import com.aplicatie.Corbeanu_George_java_app.model.SponsorEchipe;

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Football World Cup Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 19px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size:17px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .add-row-button, .save-button, .delete-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .add-row-button, .save-button {
+            background-color: #4CAF50;
+            color: white;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .add-row-button:hover, .save-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 17px; /* Crește dimensiunea textului */
+        }
+
+        /* Stilizarea opțiunilor din dropdown */
+        option {
+            font-size: 17px; /* Crește dimensiunea textului pentru fiecare opțiune */
+        }
+
+    </style>
+    <script>
+        let currentTable = "";
+        let originalData = {};
+
+        function fetchData() {
+            currentTable = document.getElementById("tableDropdown").value;
+            toggleAddRowButton();
+
+            if (!currentTable) {
+                document.getElementById("dataTable").innerHTML = '';
+                originalData = {};
+                return;
+            }
+
+            fetch(`/admin/api/${currentTable}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayTable(data);
+                    originalData = data.reduce((acc, item) => {
+                        const uniqueKey = item.nume_jucator || item.tara || item.id;
+                        acc[uniqueKey] = { ...item };
+                        return acc;
+                    }, {});
+                })
+                .catch(error => console.error(`Eroare la preluarea datelor pentru ${currentTable}:`, error));
+        }
+
+        function toggleAddRowButton() {
+            const addRowButton = document.querySelector(".add-row-button");
+
+            if (currentTable === "jucatori" || currentTable === "echipe") {
+                addRowButton.style.display = "block";
+            } else {
+                addRowButton.style.display = "none";
+            }
+        }
+
+        function displayTable(data) {
+            const table = document.getElementById("dataTable");
+            table.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                table.innerHTML = '<tr><td colspan="100%">Nicio înregistrare disponibilă</td></tr>';
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const headerRow = document.createElement("tr");
+
+            headers.forEach(header => {
+                const th = document.createElement("th");
+                th.innerText = header.replace('_', ' ');
+                headerRow.appendChild(th);
+            });
+
+            if (currentTable === "jucatori" || currentTable === "echipe") {
+                const operationsHeader = document.createElement("th");
+                operationsHeader.innerText = "Operații";
+                headerRow.appendChild(operationsHeader);
+            }
+
+            table.appendChild(headerRow);
+
+            data.forEach(item => {
+                const row = document.createElement("tr");
+
+                const uniqueName = item.nume_jucator || item.tara || item.id;
+
+                headers.forEach(header => {
+                    const td = document.createElement("td");
+                    td.contentEditable = currentTable === "jucatori" || currentTable === "echipe";
+                    td.innerText = item[header] !== null ? item[header] : "";
+                    row.appendChild(td);
+                });
+
+                if (currentTable === "jucatori" || currentTable === "echipe") {
+                    const operationsCell = document.createElement("td");
+
+                    const saveBtn = document.createElement("button");
+                    saveBtn.className = "save-button";
+                    saveBtn.innerText = "Salvează";
+                    saveBtn.onclick = () => updateRow(row, uniqueName);
+                    operationsCell.appendChild(saveBtn);
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "delete-button";
+                    deleteBtn.innerText = "Șterge";
+                    deleteBtn.onclick = () => deleteRow(uniqueName, row);
+                    operationsCell.appendChild(deleteBtn);
+
+                    row.appendChild(operationsCell);
+                }
+
+                table.appendChild(row);
+            });
+        }
+
+        function addNewRow() {
+            const table = document.getElementById("dataTable");
+            const headers = Array.from(table.rows[0].cells).map(cell => cell.innerText);
+            const newRow = document.createElement("tr");
+
+            for (let i = 0; i < headers.length; i++) {
+                if (i === headers.length - 1) {
+                    const operationsCell = document.createElement("td");
+
+                    const saveBtn = document.createElement("button");
+                    saveBtn.className = "save-button";
+                    saveBtn.innerText = "Salvează nou";
+                    saveBtn.onclick = () => saveNewRow(newRow);
+                    operationsCell.appendChild(saveBtn);
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "delete-button";
+                    deleteBtn.innerText = "Șterge";
+                    deleteBtn.onclick = () => newRow.remove();
+                    operationsCell.appendChild(deleteBtn);
+
+                    newRow.appendChild(operationsCell);
+                } else {
+                    const td = document.createElement("td");
+                    td.contentEditable = true;
+                    newRow.appendChild(td);
+                }
+            }
+
+            table.appendChild(newRow);
+        }
+
+
+
+
+
+        function saveNewRow(newRow) {
+            const cells = newRow.querySelectorAll("td");
+            const dataToSave = {};
+            let valid = true;
+            let errorMessage = "";
+
+            // Câmpurile pentru care lăsăm "gol" să fie permis
+            const fieldsAllowedEmpty = [
+                "goluri",
+                "pase decisive",
+                "cartonase galbene",
+                "cartonase rosii"
+            ];
+
+            cells.forEach((cell, index) => {
+                const headerOriginal = document.getElementById("dataTable").rows[0].cells[index].innerText.trim();
+                const header = headerOriginal.toLowerCase(); // pentru comparații
+
+                if (header !== "operații") {
+                    const fieldValue = cell.innerText.trim();
+
+                    // Dacă header-ul NU este în lista de câmpuri care pot fi goale...
+                    if (!fieldValue && !fieldsAllowedEmpty.includes(header)) {
+                        valid = false;
+                        cell.style.border = "2px solid red";
+                        errorMessage += `Eroare! Câmpul "${headerOriginal}" este obligatoriu și trebuie completat.\n`;
+                    }
+                    else if (["nume jucator", "pozitie jucata", "antrenor", "tara"].includes(header)) {
+                        const { valid: isValid, correctedValue } = validateAndCapitalize(fieldValue);
+                        if (!isValid) {
+                            valid = false;
+                            cell.style.border = "2px solid red";
+                            errorMessage += `Eroare! Valoarea introdusă în câmpul "${headerOriginal}" trebuie să conțină doar litere.\n`;
+                        } else {
+                            cell.innerText = correctedValue;
+                            dataToSave[headerOriginal.replace(' ', '_')] = correctedValue;
+                            cell.style.border = "";
+                        }
+                    }
+                    else {
+                        // Orice alt câmp este salvat direct
+                        dataToSave[headerOriginal.replace(' ', '_')] = fieldValue;
+                    }
+                }
+            });
+
+            if (!valid) {
+                alert(errorMessage);
+                return;
+            }
+
+            let endpoint;
+            if (currentTable === "echipe") {
+                endpoint = `/admin/api/echipadto`;
+            } else if (currentTable === "jucatori") {
+                endpoint = `/admin/api/jucatordto`;
+            } else {
+                alert("Tabela selectată nu suportă operațiuni de adăugare.");
+                return;
+            }
+
+            fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataToSave)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(error => {
+                            throw new Error(error.message || "Eroare la salvare!");
+                        });
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    alert(message);
+                    fetchData();
+                })
+                .catch(error => alert(error.message || "Eroare la salvare!"));
+        }
+
+
+
+
+
+
+
+        function updateRow(row, uniqueName) {
+            const cells = row.querySelectorAll("td");
+            const dataToUpdate = {};
+            let hasChanges = false;
+            let valid = true;
+            let errorMessage = "";
+
+            // Câmpurile pentru care lăsăm "gol" să fie permis
+            const fieldsAllowedEmpty = [
+                "goluri",
+                "pase decisive",
+                "cartonase galbene",
+                "cartonase rosii"
+            ];
+
+            cells.forEach((cell, index) => {
+                const headerOriginal = document.getElementById("dataTable").rows[0].cells[index].innerText.trim();
+                const header = headerOriginal.toLowerCase();
+                if (header !== "operații") {
+                    const fieldValue = cell.innerText.trim();
+
+                    // Dacă header-ul NU este în lista de câmpuri care pot fi goale...
+                    if (!fieldValue && !fieldsAllowedEmpty.includes(header)) {
+                        valid = false;
+                        cell.style.border = "2px solid red";
+                        errorMessage += `Eroare! Câmpul "${headerOriginal}" este obligatoriu și trebuie completat.\n`;
+                    }
+                    else if (["nume jucator", "pozitie jucata", "antrenor", "tara"].includes(header)) {
+                        const { valid: isValid, correctedValue } = validateAndCapitalize(fieldValue);
+                        if (!isValid) {
+                            valid = false;
+                            cell.style.border = "2px solid red";
+                            errorMessage += `Eroare! Valoarea introdusă în câmpul "${headerOriginal}" trebuie să conțină doar litere.\n`;
+                        } else {
+                            cell.innerText = correctedValue;
+                            dataToUpdate[headerOriginal.replace(' ', '_')] = correctedValue;
+                            cell.style.border = "";
+                        }
+                    }
+                    else {
+                        dataToUpdate[headerOriginal.replace(' ', '_')] = fieldValue;
+                    }
+
+                    // Verificăm dacă s-au produs modificări reale față de datele inițiale
+                    if (
+                        originalData[uniqueName] &&
+                        originalData[uniqueName][headerOriginal.replace(' ', '_')] !== fieldValue
+                    ) {
+                        hasChanges = true;
+                    }
+                }
+            });
+
+            if (!valid) {
+                alert(errorMessage);
+                return;
+            }
+
+            if (!hasChanges) {
+                alert("Nicio modificare efectuată.");
+                return;
+            }
+
+            if (!confirm("Doriți să efectuați modificările?")) {
+                return;
+            }
+
+            let endpoint;
+            if (currentTable === "echipe") {
+                endpoint = `/admin/api/echipadto/${encodeURIComponent(uniqueName)}`;
+            } else if (currentTable === "jucatori") {
+                endpoint = `/admin/api/jucatordto/${encodeURIComponent(uniqueName)}`;
+            } else {
+                alert("Tabela selectată nu suportă operațiuni de actualizare.");
+                return;
+            }
+
+            fetch(endpoint, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataToUpdate)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(error => {
+                            throw new Error(error.message || "Eroare la actualizare!");
+                        });
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    alert(message);
+                    fetchData();
+                })
+                .catch(error => alert(error.message || "Eroare la actualizare!"));
+        }
+
+
+
+
+        function deleteRow(uniqueName, row) {
+            const endpoint = currentTable === "echipe"
+                ? `/admin/api/echipadto/${encodeURIComponent(uniqueName)}`
+                : `/admin/api/jucatordto/${encodeURIComponent(uniqueName)}`;
+
+            if (!confirm(`Sigur doriți să ștergeți ${uniqueName}?`)) return;
+
+            fetch(endpoint, { method: "DELETE" })
+                .then(response => response.ok ? row.remove() : Promise.reject(response))
+                .then(() => alert("Ștergere reușită!"))
+                .catch(() => alert("Eroare la ștergere!"));
+        }
+
+
+
+        function validateAndCapitalize(input) {
+
+            const regex = /^[a-zA-Z\s]+$/;
+
+
+            if (!regex.test(input.trim())) {
+                return { valid: false, correctedValue: input };
+            }
+
+
+            const correctedValue = input
+                .toLowerCase()
+                .split(' ')
+                .filter(word => word.length > 0)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            return { valid: true, correctedValue };
+        }
+
+
+    </script>
+</head>
+<body>
+<h1>Admin - Pagina Campionatului Mondial de Fotbal</h1>
+<h2>Selectați o tabelă pentru a efectua operații</h2>
+
+<div style="text-align: center;">
+    <label for="tableDropdown">Selectați tabelul:</label>
+    <select id="tableDropdown" onchange="fetchData()">
+        <option value="" selected>Nicio tabelă selectată</option>
+        <option value="clasamente">Clasament</option>
+        <option value="echipe">Echipe</option>
+        <option value="jucatori">Jucători</option>
+        <option value="meciuri">Meciuri</option>
+        <option value="sponsori">Sponsori</option>
+        <option value="stadioane">Stadioane</option>
+    </select>
+</div>
+
+<table id="dataTable"></table>
+<button class="add-row-button" onclick="addNewRow()" style="display: none;">Adaugă un nou rând</button>
+</body>
+</html>

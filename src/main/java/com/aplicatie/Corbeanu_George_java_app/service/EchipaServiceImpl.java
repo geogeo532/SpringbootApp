@@ -1,3 +1,7 @@
+/** Clasa pentru crearea implementarii service-ului pentru tabela echipa
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.service;
 
 import java.util.List;
@@ -44,5 +48,45 @@ public class EchipaServiceImpl implements EchipaService {
     @Override
     public void delete(int id) {
         echipaRepository.delete(id);
+    }
+
+
+    @Override
+    @Transactional
+    public void saveDTO(EchipaDTO echipaDTO) {
+        echipaRepository.saveDTO(echipaDTO);
+    }
+
+    @Override
+    @Transactional
+    public void updateDTOByTara(EchipaDTO echipaDTO, String tara) {
+        echipaRepository.updateDTOByTara(echipaDTO, tara);
+    }
+
+    @Override
+    @Transactional
+    public void deleteDTOByTara(String tara) {
+        echipaRepository.deleteDTOByTara(tara);
+    }
+
+    @Override
+    @Transactional
+    public List<EchipaDTO> getCoachesWithRedCards()
+    {
+        return echipaRepository.getCoachesWithRedCards();
+    }
+
+    @Override
+    @Transactional
+    public List<EchipaDTO> getTeamsWithAboveAverageScorers()
+    {
+        return echipaRepository.getTeamsWithAboveAverageScorers();
+    }
+
+    @Override
+    @Transactional
+    public List<EchipaDTO> getTeamsWithAboveAverageScorers(int minPlayersAboveAverage)
+    {
+        return echipaRepository.getTeamsWithAboveAverageScorers(minPlayersAboveAverage);
     }
 }

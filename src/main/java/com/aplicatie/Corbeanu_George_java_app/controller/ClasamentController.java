@@ -1,3 +1,8 @@
+/** Clasa pentru controllerul clasei clasament
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
+
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
 import com.aplicatie.Corbeanu_George_java_app.DTO.ClasamentDTO;

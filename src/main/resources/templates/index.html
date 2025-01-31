@@ -39,26 +39,31 @@
 
         select {
             padding: 5px;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         table {
             width: 80%;
-            margin: 20px auto;
+            margin: 10px auto;
             border-collapse: collapse;
             background-color: white;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         th, td {
-            padding: 20px;
+            padding: 10px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
+            font-size: 17px;
         }
 
         th {
             background-color: #4CAF50;
             color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
         tr:hover {
@@ -67,13 +72,49 @@
 
         .empty-message {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         #customInput, #playerInput {
             margin-top: 20px;
             text-align: center;
-            display: none; /* Hidden by default */
+            display: none;
+        }
+
+        #curiozitatileZileiContainer {
+            text-align: center;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #curiozitatileZileiContainer h3 {
+            display: inline;
+        }
+
+        #curiozitateArrow {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        #curiozitatileZilei {
+            display: none;
+            margin: 20px auto;
+            width: 80%;
+            text-align: center;
+
+        }
+
+        #curiozitatileZilei button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #curiozitatileZilei button:hover {
+            background-color: #45a049;
         }
 
         #customInput input, #playerInput input {
@@ -98,6 +139,32 @@
 
     <script>
         // Function to fetch data from the server
+        document.addEventListener("DOMContentLoaded", function () {
+            const curiositiesContainer = document.getElementById("curiozitatileZileiContainer");
+            const curiositiesDiv = document.getElementById("curiozitatileZilei");
+            const arrow = document.getElementById("curiozitateArrow");
+
+            // Forțăm ascunderea div-ului și setarea săgeții la inițializare
+            curiositiesDiv.style.display = "none";
+            curiositiesDiv.style.visibility = "hidden"; // Asigurăm ascunderea completă
+            arrow.innerHTML = "&#9660;"; // Săgeată în jos
+
+            // Gestionăm click-ul pentru toggle
+            curiositiesContainer.addEventListener("click", function () {
+                if (curiositiesDiv.style.display === "none") {
+                    curiositiesDiv.style.display = "block";
+                    curiositiesDiv.style.visibility = "visible"; // Afișăm complet
+                    arrow.innerHTML = "&#9650;"; // Săgeată în sus
+                } else {
+                    curiositiesDiv.style.display = "none";
+                    curiositiesDiv.style.visibility = "hidden"; // Ascundem complet
+                    arrow.innerHTML = "&#9660;"; // Săgeată în jos
+                }
+            });
+        });
+
+
+
         function fetchData() {
             const selectedTable = document.getElementById("tableDropdown").value; // Selected table
             const table = document.getElementById("dataTable");
@@ -105,16 +172,29 @@
             // Show or hide the custom input divs based on selection
             const customInputDiv = document.getElementById("customInput");
             const playerInputDiv = document.getElementById("playerInput");
+            const curiositiesDiv = document.getElementById("curiozitatileZilei");
 
             if (selectedTable === "clasamente") {
                 customInputDiv.style.display = "block";
                 playerInputDiv.style.display = "none";
+                curiositiesDiv.style.display = "none";
+                curiozitatileZileiContainer.style.display="none";
             } else if (selectedTable === "jucatori") {
                 playerInputDiv.style.display = "block";
                 customInputDiv.style.display = "none";
-            } else {
+                curiositiesDiv.style.display = "none";
+                curiozitatileZileiContainer.style.display="none";
+            } else if (selectedTable === "") {
+                curiositiesDiv.style.display = "block";
+                playerInputDiv.style.display = "none";
+                customInputDiv.style.display = "none";
+                curiozitatileZileiContainer.style.display="block";
+            }
+            else {
                 customInputDiv.style.display = "none";
                 playerInputDiv.style.display = "none";
+                curiositiesDiv.style.display = "none";
+                curiozitatileZileiContainer.style.display="none";
             }
 
             if (selectedTable === "") {
@@ -125,7 +205,7 @@
             const endpoint = `/admin/api/${selectedTable}`; // Corresponding endpoint
 
             // Fetch request to the endpoint
-            fetch(endpoint)
+            authenticatedFetch(endpoint)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -133,11 +213,72 @@
                     return response.json();
                 })
                 .then(data => {
-                    displayTable(data, selectedTable); // Display the fetched data in the table
+                    displayTable(data, selectedTable);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                     alert("A apărut o eroare la preluarea datelor! Verificați conexiunea cu baza de date sau serverul.");
+                });
+        }
+
+        function fetchCuriosity(endpoint, resultId) {
+            const resultContainer = document.getElementById(resultId);
+
+            // Toggle visibility logic
+            if (resultContainer.style.display === "block") {
+                resultContainer.style.display = "none"; // Hide the container
+                resultContainer.innerHTML = ""; // Clear the content
+                return;
+            }
+
+            resultContainer.style.display = "block"; // Show the container
+
+            // Fetch data with basic authentication
+            fetch(endpoint, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Basic " + btoa("admin:parola") // Encode username and password
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        let tableHtml = '<table><thead><tr>';
+                        const keysToDisplay = resultId === "result1"
+                            ? ["nume_jucator", "tara", "goluri"]
+                            : resultId === "result2"
+                                ? ["tara", "antrenor"]
+                                : ["tara"];
+
+                        // Generate table headers
+                        keysToDisplay.forEach(key => {
+                            tableHtml += `<th>${key.replace(/_/g, " ").toUpperCase()}</th>`;
+                        });
+                        tableHtml += "</tr></thead><tbody>";
+
+                        // Generate table rows
+                        data.forEach(item => {
+                            tableHtml += "<tr>";
+                            keysToDisplay.forEach(key => {
+                                tableHtml += `<td>${item[key] !== null ? item[key] : "N/A"}</td>`;
+                            });
+                            tableHtml += "</tr>";
+                        });
+
+                        tableHtml += "</tbody></table>";
+                        resultContainer.innerHTML = tableHtml;
+                    } else {
+                        resultContainer.innerHTML = "<p>No data available</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    resultContainer.innerHTML = "<p>Eroare la preluarea datelor!</p>";
                 });
         }
 
@@ -154,7 +295,7 @@
             const endpoint = `/admin/api/clasamente/minim?minPoints=${minPoints}`;
 
             // Fetch request to the endpoint
-            fetch(endpoint)
+            authenticatedFetch(endpoint)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -182,13 +323,8 @@
 
             const endpoint = `/admin/api/jucatori/minim?minGoals=${minGoals}`;
 
-            // Encode user and password for Basic Authentication
-            const username = "admin";
-            const password = "parola";
-            const basicAuth = 'Basic ' + btoa(`${username}:${password}`);
-
             // Fetch request to the endpoint
-            fetch(endpoint)
+            authenticatedFetch(endpoint)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -269,6 +405,98 @@
                 table.appendChild(row);
             });
         }
+
+        // Function to initialize the visibility of elements based on the default selection
+        function initializePage() {
+            const selectedTable = document.getElementById("tableDropdown").value;
+            const curiositiesDiv = document.getElementById("curiozitatileZilei");
+
+            if (selectedTable === "") {
+                curiositiesDiv.style.display = "block";
+            } else {
+                curiositiesDiv.style.display = "none";
+            }
+        }
+
+        // Run the initialization function after the page loads
+        window.onload = initializePage;
+
+        function fetchAboveAverageScorers() {
+            const minPlayers = document.getElementById("minPlayersInput").value;
+
+            if (!minPlayers || minPlayers <= 0) {
+                alert("Introduceți un număr valid de jucători!");
+                return;
+            }
+
+            const endpoint = `http://localhost:8081/admin/api/above-average-scorers-param?minPlayers=${minPlayers}`;
+            const resultContainer = document.getElementById("result3");
+
+            // Resetăm rezultatul afișat
+            resultContainer.innerHTML = "";
+            resultContainer.style.display = "block";
+            console.log(endpoint);
+            fetch(endpoint, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Basic " + btoa("admin:parola") // Înlocuiți cu autentificarea dorită, dacă e cazul
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    const filteredData = data.filter(team => team.tara !== null); // Elimină echipele cu `tara` null
+
+                    if (filteredData.length === 0) {
+                        resultContainer.innerHTML = "<p>Nu există echipe care să îndeplinească criteriile.</p>";
+                    } else {
+                        let tableHtml = '<table><thead><tr><th>Nume Echipa</th></tr></thead><tbody>';
+                        filteredData.forEach(team => {
+                            tableHtml += `<tr>
+                            <td>${team.tara}</td>
+                          </tr>`;
+                        });
+                        tableHtml += '</tbody></table>';
+                        resultContainer.innerHTML = tableHtml;
+                    }
+                });
+        }
+
+        document.getElementById("curiozitatileZileiContainer").addEventListener("click", function () {
+            const curiositiesDiv = document.getElementById("curiozitatileZilei");
+            const arrow = document.getElementById("curiozitateArrow");
+
+            if (curiositiesDiv.style.display === "none") {
+                curiositiesDiv.style.display = "block"; // Afișează curiozitățile
+                arrow.innerHTML = "&#9650;"; // Săgeată în sus
+            } else {
+                curiositiesDiv.style.display = "none"; // Ascunde curiozitățile
+                arrow.innerHTML = "&#9660;"; // Săgeată în jos
+            }
+        });
+
+        // Forțăm ascunderea la inițializarea paginii
+        window.onload = function () {
+            const curiositiesDiv = document.getElementById("curiozitatileZilei");
+            curiositiesDiv.style.display = "none"; // Asigurăm că începe ascuns
+        };
+
+        // Custom fetch function with Basic Authentication
+        function authenticatedFetch(url, options = {}) {
+            const headers = options.headers || {};
+            headers["Authorization"] = "Basic " + btoa("admin:parola"); // Adaugă autentificare
+
+            return fetch(url, {
+                ...options,
+                headers: headers
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -277,9 +505,9 @@
 
 <div style="text-align: center;">
     <label for="tableDropdown">Selectati ce doriti sa vizualizati azi:</label>
-    <select id="tableDropdown" onchange="fetchData()"> <!-- Dropdown for table selection -->
+    <select id="tableDropdown" onchange="fetchData()" > <!-- Dropdown for table selection -->
         <option value="" selected>Nicio tabela selectata</option>
-        <option value="clasamente">Clasamente</option>
+        <option value="clasamente">Clasament</option>
         <option value="echipe">Echipe</option>
         <option value="jucatori">Jucători</option>
         <option value="meciuri">Meciuri</option>
@@ -302,6 +530,32 @@
     <label for="goalInput">Introduceți numărul minim de goluri:</label>
     <input type="number" id="goalInput" placeholder="0">
     <button onclick="fetchMinGoals()">Executa</button>
+</div>
+
+<div id="curiozitatileZileiContainer">
+    <h3>Curiozitățile zilei</h3>
+    <span id="curiozitateArrow">&#9660;</span>
+</div>
+
+<div id="curiozitatileZilei" style="display: none;">
+    <div>
+        <p>Jucătorii cu cele mai multe goluri pe echipă:</p>
+        <button onclick="fetchCuriosity('/admin/api/top-scorers', 'result1')">Apasă aici pentru a afla</button>
+        <div id="result1"></div>
+    </div>
+    <div>
+        <p>Antrenorii care conduc echipe cu cel puțin un jucător care a primit un cartonaș roșu:</p>
+        <button onclick="fetchCuriosity('/admin/api/coaches-red-cards', 'result2')">Apasă aici pentru a afla</button>
+        <div id="result2"></div>
+    </div>
+    <div>
+        <p>Lista echipelor care au cel puțin
+            <input type="number" id="minPlayersInput" placeholder="0" style="width: 50px;">
+            jucător/i care a/au marcat mai mult decât media golurilor din campionat:
+        </p>
+        <button onclick="fetchAboveAverageScorers()">Apasă aici pentru a afla</button>
+        <div id="result3"></div>
+    </div>
 </div>
 
 </body>

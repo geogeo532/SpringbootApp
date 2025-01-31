@@ -1,3 +1,7 @@
+/** Clasa pentru crearea implementării repository-ului pentru tabela clasament
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import com.aplicatie.Corbeanu_George_java_app.DTO.ClasamentDTO;
@@ -22,7 +26,8 @@ public class ClasamentRepositoryImpl implements ClasamentRepository {
     @Override
     public List<ClasamentDTO> getClasaments() {
 
-        String query = "SELECT e.tara, c.pozitie_finala, c.meciuri_jucate, c.victorii, c.infrangeri, c.puncte, c.golaveraj, c.id_clasament " +
+        String query = "SELECT e.tara, c.pozitie_finala, c.meciuri_jucate, " +
+                "c.victorii, c.infrangeri, c.puncte, c.golaveraj, c.id_clasament " +
                 "FROM clasamente c " +
                 "JOIN echipe e ON c.id_echipa = e.id_echipa";
 

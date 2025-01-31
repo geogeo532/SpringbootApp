@@ -1,3 +1,7 @@
+/** Clasa pentru crearea implementării repository-ului pentru tabela meciuri
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.repository;
 
 import com.aplicatie.Corbeanu_George_java_app.DTO.MeciDTO;
@@ -19,7 +23,8 @@ public class MeciRepositoryImpl implements MeciRepository {
 
     @Override
     public List<MeciDTO> getMeciuri() {
-        String query = "SELECT m.data_meci, eg.tara AS echipa_gazda, eo.tara AS echipa_oaspete, m.scor_gazde, m.scor_oaspeti, s.nume_stadion " +
+        String query = "SELECT m.data_meci, eg.tara AS echipa_gazda," +
+                " eo.tara AS echipa_oaspete, m.scor_gazde, m.scor_oaspeti, s.nume_stadion " +
                 "FROM meciuri m " +
                 "JOIN stadioane s ON m.id_stadion = s.id_stadion " +
                 "JOIN echipe eg ON m.echipa_gazda = eg.id_echipa " +

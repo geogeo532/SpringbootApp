@@ -1,11 +1,19 @@
+/** Clasa pentru controllerul clasei jucator
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
+
 package com.aplicatie.Corbeanu_George_java_app.controller;
 
 import com.aplicatie.Corbeanu_George_java_app.DTO.JucatorDTO;
 import com.aplicatie.Corbeanu_George_java_app.model.Jucator;
 import com.aplicatie.Corbeanu_George_java_app.service.JucatorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -55,5 +63,61 @@ public class JucatorController {
     public String delete(@PathVariable int id) {
         jucatorService.delete(id);
         return "Player has been deleted with id: " + id;
+    }
+
+    @PostMapping("/jucatordto")
+    public ResponseEntity<String> saveDTO(@RequestBody JucatorDTO jucatorDTO) {
+        // Validare manuală pentru câmpurile obligatorii
+        if (jucatorDTO.getNume_jucator() == null || jucatorDTO.getNume_jucator().trim().isEmpty() ||
+                jucatorDTO.getTara() == null || jucatorDTO.getTara().trim().isEmpty() ||
+                jucatorDTO.getPozitie_jucata() == null || jucatorDTO.getPozitie_jucata().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Toate câmpurile obligatorii (Nume Jucător, Țară, Poziție Jucată) trebuie completate!");
+        }
+
+        try {
+            jucatorService.saveDTO(jucatorDTO);
+            return ResponseEntity.ok("Jucătorul DTO a fost salvat cu succes!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Eroare la salvarea jucătorului DTO: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/jucatordto/{nume_jucator}")
+    public ResponseEntity<String> updateDTO(@RequestBody JucatorDTO jucatorDTO, @PathVariable("nume_jucator") String nume_jucator) {
+        // Validare manuală pentru câmpurile obligatorii
+        if (jucatorDTO.getNume_jucator() == null || jucatorDTO.getNume_jucator().trim().isEmpty() ||
+                jucatorDTO.getTara() == null || jucatorDTO.getTara().trim().isEmpty() ||
+                jucatorDTO.getPozitie_jucata() == null || jucatorDTO.getPozitie_jucata().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Toate câmpurile obligatorii (Nume Jucător, Țară, Poziție Jucată) trebuie completate!");
+        }
+
+        try {
+            // Decodifică numele compus pentru a evita probleme cu spațiile sau caracterele speciale
+            String decodedName = URLDecoder.decode(nume_jucator, StandardCharsets.UTF_8);
+
+            // Folosește numele decodificat în logica de actualizare
+            jucatorService.updateDTOByName(jucatorDTO, decodedName);
+
+            return ResponseEntity.ok("Jucătorul DTO a fost actualizat cu succes!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Eroare la actualizarea jucătorului DTO: " + e.getMessage());
+        }
+    }
+
+
+    // Delete a JucatorDTO by nume_jucator
+    @DeleteMapping("/jucatordto/{nume_jucator}")
+    public ResponseEntity<String> deleteDTO(@PathVariable String nume_jucator) {
+        try {
+            jucatorService.deleteDTOByName(nume_jucator);
+            return ResponseEntity.ok("Jucătorul DTO a fost șters cu succes!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Eroare la ștergerea jucătorului DTO: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/top-scorers")
+    public List<JucatorDTO> getTopScorersByTeam() {
+        return jucatorService.getTopScorersByTeam();
     }
 }

@@ -1,3 +1,7 @@
+/** Clasa pentru modelul sponsor, modificat special pentru afisarea pe pagina de frontend
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
 package com.aplicatie.Corbeanu_George_java_app.DTO;
 
 import jakarta.persistence.Column;

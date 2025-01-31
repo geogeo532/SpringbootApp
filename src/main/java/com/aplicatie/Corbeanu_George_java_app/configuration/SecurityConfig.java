@@ -1,3 +1,10 @@
+/** Clasa pentru securitate pentru pagina admin
+ * @author Corbeanu George
+ * @version 11 Ianuarie 2025
+ */
+
+
+
 package com.aplicatie.Corbeanu_George_java_app.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -20,15 +27,8 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable())
                 .authorizeRequests(request ->
-                        request.requestMatchers("/admin/api/clasament/**").authenticated()
-                                .requestMatchers("/admin/api/echipa/**").authenticated()
-                                .requestMatchers("/admin/api/jucator/**").authenticated()
-                                .requestMatchers("/admin/api/meci/**").authenticated()
-                                .requestMatchers("/admin/api/sponsor/**").authenticated()
-                                .requestMatchers("/admin/api/sponsorEchipe/**").authenticated()
-                                .requestMatchers("/admin/api/stadion/**").authenticated()
-                                .requestMatchers("/admin/api/statisticaEchipe/**").authenticated()
-                                .requestMatchers("/admin/api/statisticaJucatori/**").authenticated()
+                        request.requestMatchers("/admin").authenticated()
+                                .requestMatchers("/admin/**").authenticated()
                                 .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -40,7 +40,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username("admin")
-                        .password("{noop}parola") // Prefixăm parola cu {noop}
+                        .password("{noop}parola")
                         .roles("USER")
                         .build()
         );
